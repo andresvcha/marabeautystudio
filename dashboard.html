@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Mara Beauty Studio</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="dashboard-layout">
+        <aside class="sidebar">
+            <div class="sidebar-header">ADMINISTRADOR</div>
+            <nav>
+                <ul>
+                    <li class="active"><a href="#">GESTIONAR CITAS</a></li>
+                </ul>
+            </nav>
+        </aside>
+        <main class="main-content">
+            <header class="dashboard-header">
+                <div class="user-info">
+                    <span>Julieta Venegas</span>
+                    <img src="https://i.pravatar.cc/32?u=admin" alt="User Avatar">
+                </div>
+                <button id="logout-btn" class="logout-button" title="Cerrar Sesión">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                </button>
+            </header>
+            <div class="calendar-container">
+                <h2 class="calendar-title">CALENDARIO</h2>
+                <div class="calendar-nav">
+                     <button id="prev-week-btn">&lt;</button>
+                     <span id="week-display"></span>
+                     <button id="next-week-btn">&gt;</button>
+                </div>
+                <div id="admin-calendar" class="calendar-grid"></div>
+                <div class="calendar-actions">
+                    <button class="btn btn-primary" id="show-create-modal-btn">Crear cita</button>
+                    <button class="btn btn-secondary" id="show-delete-modal-btn" disabled>Eliminar cita</button>
+                </div>
+                <div id="alert-container-admin"></div>
+            </div>
+        </main>
+    </div>
+
+    <div id="create-modal" class="modal-backdrop hidden">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Crear nueva cita</h3>
+                <button class="close-btn" data-modal-id="create-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="create-form">
+                    <div class="form-group">
+                        <label for="new-date">FECHA DE CITA:</label>
+                        <input type="date" id="new-date" required>
+                    </div>
+                    <div class="form-group">
+                        <label>HORA DE CITA:</label>
+                        <div class="time-inputs">
+                           <select id="new-time-start" required></select>
+                           <span>a</span>
+                           <select id="new-time-end" required></select>
+                        </div>
+                    </div>
+                    <div class="modal-actions">
+                        <button type="submit" class="btn btn-primary">GUARDAR</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+     <div id="delete-modal" class="modal-backdrop hidden">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Eliminar cita</h3>
+                <button class="close-btn" data-modal-id="delete-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                 <p>¿Desea eliminar la cita seleccionada?</p>
+                 <div class="form-group">
+                    <label for="delete-cita-datetime">FECHA Y HORA DE LA CITA:</label>
+                    <input type="text" id="delete-cita-datetime" disabled>
+                 </div>
+                 <div class="modal-actions">
+                    <button class="btn btn-primary" id="confirm-delete-btn">SÍ</button>
+                    <button type="button" class="btn btn-secondary" data-modal-id="delete-modal">NO</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

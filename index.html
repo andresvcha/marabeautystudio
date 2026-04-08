@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reservar Cita - Mara Beauty Studio</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="main-container">
+        <header class="page-header">
+            <div class="header-content">
+                <h1>BIENVENIDO A MARA BEAUTY STUDIO</h1>
+                <p>AQUÍ PUEDES SELECCIONAR LAS CITAS DISPONIBLES PARA TU SERVICIO CON NOSOTROS</p>
+            </div>
+            <a href="admin.html" class="btn btn-secondary btn-login-header">Iniciar sesión</a>
+        </header>
+
+        <div class="calendar-container">
+            <h2 class="calendar-title">CALENDARIO</h2>
+            <div class="calendar-nav">
+                <button id="prev-week-btn">&lt;</button>
+                <span id="week-display"></span>
+                <button id="next-week-btn">&gt;</button>
+            </div>
+            <div id="client-calendar" class="calendar-grid"></div>
+            <div class="calendar-actions">
+                <button id="book-action-btn" class="btn btn-primary" disabled>Tomar cita</button>
+            </div>
+             <div id="alert-container-client"></div>
+        </div>
+    </div>
+
+    <div id="book-modal" class="modal-backdrop hidden">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>TOMAR CITA</h3>
+                <button class="close-btn" data-modal-id="book-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>¿Desea tomar la cita seleccionada?</p>
+                <form id="book-form">
+                    <div class="form-group">
+                        <label for="cita-datetime">FECHA Y HORA DE LA CITA:</label>
+                        <input type="text" id="cita-datetime" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label for="client-name">NOMBRE COMPLETO:</label>
+                        <input type="text" id="client-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="client-email">CORREO ELECTRÓNICO:</label>
+                        <input type="email" id="client-email" required>
+                    </div>
+                     <p class="privacy-notice">Al clickear en SÍ, aceptas el manejo de tus datos según nuestra política de privacidad.</p>
+                    <div class="modal-actions">
+                        <button type="submit" class="btn btn-primary">SÍ</button>
+                        <button type="button" class="btn btn-secondary" data-modal-id="book-modal">NO</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div id="cancel-modal" class="modal-backdrop hidden">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>CANCELAR CITA</h3>
+                <button class="close-btn" data-modal-id="cancel-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                 <p>¿Deseas cancelar la cita reservada?</p>
+                 <div class="form-group">
+                    <label for="cancel-cita-datetime">FECHA Y HORA DE LA CITA:</label>
+                    <input type="text" id="cancel-cita-datetime" disabled>
+                 </div>
+                 <div class="modal-actions">
+                    <button class="btn btn-primary" id="confirm-cancel-btn">SÍ</button>
+                    <button type="button" class="btn btn-secondary" data-modal-id="cancel-modal">NO</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

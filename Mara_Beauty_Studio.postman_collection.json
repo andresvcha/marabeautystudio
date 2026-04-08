@@ -1,0 +1,442 @@
+{
+  "info": {
+    "name": "Mara Beauty Studio API",
+    "description": "Web service REST para la gestión de citas del salón de belleza Mara Beauty Studio.\n\n**Base URL:** `http://localhost:3000`\n\n**Autenticación:** Los endpoints de admin requieren JWT. Ejecuta primero `Login Admin` y el token se guardará automáticamente en `{{token}}`.\n\n**Módulos:**\n- Auth → login\n- Appointments → gestión de citas\n- Admin → estadísticas y clientes\n- Clients → perfil de clientes\n- Users → gestión de administradores\n- Notifications → reenvío de correos",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "base_url", "value": "http://localhost:3000", "type": "string" },
+    { "key": "token",    "value": "",                      "type": "string" }
+  ],
+  "item": [
+
+    {
+      "name": "Auth",
+      "description": "Autenticación del administrador mediante JWT.",
+      "item": [
+        {
+          "name": "Login Admin",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.token) {",
+                  "    pm.collectionVariables.set('token', res.token);",
+                  "    console.log('Token guardado:', res.token);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"username\": \"admin\",\n  \"password\": \"admin123\"\n}" },
+            "url": { "raw": "{{base_url}}/api/auth/login", "host": ["{{base_url}}"], "path": ["api","auth","login"] },
+            "description": "Autentica al administrador. El token JWT se guarda automáticamente en `{{token}}`."
+          },
+          "response": [
+            {
+              "name": "200 - Login exitoso",
+              "status": "OK", "code": 200,
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "{\n  \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\",\n  \"user\": { \"id\": 1, \"username\": \"admin\" }\n}"
+            },
+            {
+              "name": "401 - Credenciales inválidas",
+              "status": "Unauthorized", "code": 401,
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "{\n  \"message\": \"Credenciales incorrectas.\"\n}"
+            }
+          ]
+        }
+      ]
+    },
+
+    {
+      "name": "Appointments",
+      "description": "Gestión de citas. Operaciones de admin requieren JWT.",
+      "item": [
+        {
+          "name": "Obtener citas por semana",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/appointments?week=15&year=2026",
+              "host": ["{{base_url}}"], "path": ["api","appointments"],
+              "query": [
+                { "key": "week", "value": "15", "description": "Número de semana (1-52)" },
+                { "key": "year", "value": "2026", "description": "Año" }
+              ]
+            },
+            "description": "Retorna todos los slots de la semana indicada. Público."
+          },
+          "response": [
+            {
+              "name": "200 - Lista de citas",
+              "status": "OK", "code": 200,
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "[\n  { \"id\": 1, \"dateTime\": \"2026-04-08T09:00:00.000Z\", \"state\": \"AVAILABLE\", \"clientId\": null, \"client\": null },\n  { \"id\": 2, \"dateTime\": \"2026-04-08T10:00:00.000Z\", \"state\": \"RESERVED\", \"clientId\": 1, \"client\": { \"id\": 1, \"name\": \"María López\", \"email\": \"maria@email.com\" } }\n]"
+            }
+          ]
+        },
+        {
+          "name": "Crear slots (Admin)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type",  "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"date\": \"2026-04-10\",\n  \"startTime\": \"09:00\",\n  \"endTime\": \"13:00\"\n}" },
+            "url": { "raw": "{{base_url}}/api/appointments", "host": ["{{base_url}}"], "path": ["api","appointments"] },
+            "description": "Crea slots cada hora en el rango indicado. Requiere JWT."
+          },
+          "response": [
+            {
+              "name": "201 - Slots creados",
+              "status": "Created", "code": 201,
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "{\n  \"message\": \"4 cita(s) creada(s).\",\n  \"slots\": [\n    { \"id\": 3, \"dateTime\": \"2026-04-10T09:00:00.000Z\", \"state\": \"AVAILABLE\", \"clientId\": null }\n  ]\n}"
+            }
+          ]
+        },
+        {
+          "name": "Reservar cita (Cliente)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"María López\",\n  \"email\": \"maria@email.com\"\n}" },
+            "url": { "raw": "{{base_url}}/api/appointments/1/book", "host": ["{{base_url}}"], "path": ["api","appointments","1","book"] },
+            "description": "Reserva un slot disponible. Público. Cambia estado a RESERVED y envía email."
+          },
+          "response": [
+            {
+              "name": "200 - Reserva exitosa",
+              "status": "OK", "code": 200,
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "{\n  \"message\": \"Cita reservada con éxito!\",\n  \"appointment\": { \"id\": 1, \"state\": \"RESERVED\", \"client\": { \"name\": \"María López\", \"email\": \"maria@email.com\" } }\n}"
+            },
+            {
+              "name": "409 - Ya reservada",
+              "status": "Conflict", "code": 409,
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "{\n  \"message\": \"La cita ya no está disponible.\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Cancelar cita (Cliente)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": { "raw": "{{base_url}}/api/appointments/1/cancel", "host": ["{{base_url}}"], "path": ["api","appointments","1","cancel"] },
+            "description": "Cancela una cita reservada. Público. Cambia estado a AVAILABLE y envía email."
+          },
+          "response": [
+            {
+              "name": "200 - Cancelación exitosa",
+              "status": "OK", "code": 200,
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "{\n  \"message\": \"Cita cancelada correctamente.\",\n  \"appointment\": { \"id\": 1, \"state\": \"AVAILABLE\", \"clientId\": null }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Eliminar slot (Admin)",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/api/appointments/1", "host": ["{{base_url}}"], "path": ["api","appointments","1"] },
+            "description": "Elimina un slot. Requiere JWT. No se puede eliminar si está RESERVED."
+          },
+          "response": [
+            {
+              "name": "200 - Eliminado",
+              "status": "OK", "code": 200,
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "{\n  \"message\": \"Cita eliminada correctamente.\"\n}"
+            },
+            {
+              "name": "400 - Cita reservada",
+              "status": "Bad Request", "code": 400,
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "{\n  \"message\": \"No se puede eliminar una cita reservada.\"\n}"
+            }
+          ]
+        }
+      ]
+    },
+
+    {
+      "name": "Admin",
+      "description": "Operaciones exclusivas del administrador. Todos requieren JWT.",
+      "item": [
+        {
+          "name": "Stats del dashboard",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/api/admin/stats", "host": ["{{base_url}}"], "path": ["api","admin","stats"] },
+            "description": "Resumen de la semana actual: total, reservadas, disponibles + total de clientes registrados."
+          },
+          "response": [
+            {
+              "name": "200 - Stats",
+              "status": "OK", "code": 200,
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "{\n  \"week\": {\n    \"total\": 10,\n    \"reserved\": 6,\n    \"available\": 4\n  },\n  \"totalClients\": 24\n}"
+            }
+          ]
+        },
+        {
+          "name": "Lista de clientes",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/api/admin/clients", "host": ["{{base_url}}"], "path": ["api","admin","clients"] },
+            "description": "Lista todos los clientes registrados con su última cita."
+          },
+          "response": [
+            {
+              "name": "200 - Lista de clientes",
+              "status": "OK", "code": 200,
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "[\n  {\n    \"id\": 1,\n    \"name\": \"María López\",\n    \"email\": \"maria@email.com\",\n    \"appointments\": [\n      { \"id\": 2, \"dateTime\": \"2026-04-08T10:00:00.000Z\", \"state\": \"RESERVED\" }\n    ]\n  }\n]"
+            }
+          ]
+        }
+      ]
+    },
+
+    {
+      "name": "Clients",
+      "description": "Gestión de clientes individuales. Todos requieren JWT.",
+      "item": [
+        {
+          "name": "Listar todos los clientes",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/api/clients", "host": ["{{base_url}}"], "path": ["api","clients"] },
+            "description": "Retorna la lista completa de clientes registrados. Requiere JWT."
+          },
+          "response": [
+            {
+              "name": "200 - Lista de clientes",
+              "status": "OK", "code": 200,
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "[\n  { \"id\": 1, \"name\": \"María López\", \"email\": \"maria@email.com\" },\n  { \"id\": 2, \"name\": \"Ana Gómez\",   \"email\": \"ana@email.com\"   }\n]"
+            }
+          ]
+        },
+        {
+          "name": "Obtener cliente por ID",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/api/clients/1", "host": ["{{base_url}}"], "path": ["api","clients","1"] },
+            "description": "Perfil completo del cliente con todo su historial de citas."
+          },
+          "response": [
+            {
+              "name": "200 - Cliente encontrado",
+              "status": "OK", "code": 200,
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "{\n  \"id\": 1,\n  \"name\": \"María López\",\n  \"email\": \"maria@email.com\",\n  \"appointments\": [\n    { \"id\": 2, \"dateTime\": \"2026-04-08T10:00:00.000Z\", \"state\": \"RESERVED\" },\n    { \"id\": 5, \"dateTime\": \"2026-03-15T09:00:00.000Z\", \"state\": \"AVAILABLE\" }\n  ]\n}"
+            },
+            {
+              "name": "404 - No encontrado",
+              "status": "Not Found", "code": 404,
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "{\n  \"message\": \"Cliente no encontrado.\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Eliminar cliente",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/api/clients/1", "host": ["{{base_url}}"], "path": ["api","clients","1"] },
+            "description": "Elimina un cliente. Requiere JWT. Falla si el cliente tiene citas activas futuras."
+          },
+          "response": [
+            {
+              "name": "200 - Eliminado",
+              "status": "OK", "code": 200,
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "{\n  \"message\": \"Cliente eliminado correctamente.\"\n}"
+            },
+            {
+              "name": "400 - Citas activas",
+              "status": "Bad Request", "code": 400,
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "{\n  \"message\": \"El cliente tiene citas activas. Cancélalas primero.\"\n}"
+            }
+          ]
+        }
+      ]
+    },
+
+    {
+      "name": "Users",
+      "description": "Gestión de usuarios administradores. Todos requieren JWT.",
+      "item": [
+        {
+          "name": "Ver perfil propio",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/api/users/profile", "host": ["{{base_url}}"], "path": ["api","users","profile"] },
+            "description": "Retorna los datos del administrador autenticado. El ID se toma del token JWT."
+          },
+          "response": [
+            {
+              "name": "200 - Perfil",
+              "status": "OK", "code": 200,
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "{\n  \"id\": 1,\n  \"username\": \"admin\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Crear usuario admin",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type",  "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"username\": \"julieta\",\n  \"password\": \"clave_segura_123\"\n}" },
+            "url": { "raw": "{{base_url}}/api/users", "host": ["{{base_url}}"], "path": ["api","users"] },
+            "description": "Crea un nuevo usuario administrador. Requiere JWT."
+          },
+          "response": [
+            {
+              "name": "201 - Usuario creado",
+              "status": "Created", "code": 201,
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "{\n  \"message\": \"Usuario creado correctamente.\",\n  \"user\": { \"id\": 2, \"username\": \"julieta\" }\n}"
+            },
+            {
+              "name": "409 - Usuario ya existe",
+              "status": "Conflict", "code": 409,
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "{\n  \"message\": \"El nombre de usuario ya existe.\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Cambiar contraseña",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type",  "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"currentPassword\": \"admin123\",\n  \"newPassword\": \"nueva_clave_456\"\n}" },
+            "url": { "raw": "{{base_url}}/api/users/password", "host": ["{{base_url}}"], "path": ["api","users","password"] },
+            "description": "Cambia la contraseña del admin autenticado. El ID se toma del token JWT."
+          },
+          "response": [
+            {
+              "name": "200 - Contraseña actualizada",
+              "status": "OK", "code": 200,
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "{\n  \"message\": \"Contraseña actualizada correctamente.\",\n  \"user\": { \"id\": 1, \"username\": \"admin\" }\n}"
+            },
+            {
+              "name": "401 - Contraseña incorrecta",
+              "status": "Unauthorized", "code": 401,
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "{\n  \"message\": \"Contraseña actual incorrecta.\"\n}"
+            }
+          ]
+        }
+      ]
+    },
+
+    {
+      "name": "Health",
+      "description": "Estado del servidor. Público.",
+      "item": [
+        {
+          "name": "Health check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{base_url}}/api/health", "host": ["{{base_url}}"], "path": ["api","health"] },
+            "description": "Verifica que la API esté activa. No requiere autenticación."
+          },
+          "response": [
+            {
+              "name": "200 - API activa",
+              "status": "OK", "code": 200,
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "{\n  \"status\": \"OK\",\n  \"message\": \"Mara Beauty Studio API activa\"\n}"
+            }
+          ]
+        }
+      ]
+    },
+
+    {
+      "name": "Notifications",
+      "description": "Reenvío manual de correos. Todos requieren JWT.",
+      "item": [
+        {
+          "name": "Reenviar confirmación",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/api/notifications/confirmation/1", "host": ["{{base_url}}"], "path": ["api","notifications","confirmation","1"] },
+            "description": "Reenvía el correo de confirmación de una cita reservada. Requiere JWT."
+          },
+          "response": [
+            {
+              "name": "200 - Enviado",
+              "status": "OK", "code": 200,
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "{\n  \"message\": \"Correo de confirmación reenviado correctamente.\"\n}"
+            },
+            {
+              "name": "404 - Sin cliente",
+              "status": "Not Found", "code": 404,
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "{\n  \"message\": \"Cita no encontrada o sin cliente asignado.\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Reenviar cancelación",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/api/notifications/cancellation/1", "host": ["{{base_url}}"], "path": ["api","notifications","cancellation","1"] },
+            "description": "Reenvía el correo de cancelación de una cita. Requiere JWT."
+          },
+          "response": [
+            {
+              "name": "200 - Enviado",
+              "status": "OK", "code": 200,
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "{\n  \"message\": \"Correo de cancelación reenviado correctamente.\"\n}"
+            },
+            {
+              "name": "404 - Sin cliente",
+              "status": "Not Found", "code": 404,
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "{\n  \"message\": \"Cita no encontrada o sin cliente asignado.\"\n}"
+            }
+          ]
+        }
+      ]
+    }
+
+  ]
+}

@@ -1,6 +1,6 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const prisma = require('../../config/db');
+const { env, db: prisma } = require('../../config');
 
 async function login(username, password) {
     const user = await prisma.user.findUnique({ where: { username } });
@@ -15,8 +15,8 @@ async function login(username, password) {
 
     const token = jwt.sign(
         { id: user.id, username: user.username },
-        process.env.JWT_SECRET,
-        { expiresIn: process.env.JWT_EXPIRES_IN || '8h' }
+        env.jwt.secret,
+        { expiresIn: env.jwt.expiresIn }
     );
 
     return {

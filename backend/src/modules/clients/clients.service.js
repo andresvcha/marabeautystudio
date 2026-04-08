@@ -29,4 +29,4 @@ async function deleteClient(id) {
     return prisma.client.delete({ where: { id } });
 }
 
-module.exports = { getClientById, deleteClient };
+module.exports = { getAllClients, getClientById, deleteClient };

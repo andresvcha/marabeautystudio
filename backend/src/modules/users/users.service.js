@@ -36,4 +36,4 @@ async function createUser(username, password) {
     });
 }
 
-module.exports = { changePassword, createUser };
+module.exports = { getProfile, changePassword, createUser };

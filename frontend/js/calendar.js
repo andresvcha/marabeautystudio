@@ -48,8 +48,26 @@ async function renderCalendar(containerId, isAdmin) {
     const calendarContainer = document.getElementById(containerId);
     if (!calendarContainer) return;
 
+    const now = new Date();
     const weekDisplay = document.getElementById('week-display');
-    if (weekDisplay) weekDisplay.textContent = `Semana ${currentWeek} del ${currentYear}`;
+    if (weekDisplay) {
+        const todayStr = now.toLocaleDateString('es-CO', {
+            timeZone,
+            weekday: 'long',
+            day: 'numeric',
+            month: 'long',
+        });
+        const todayCapitalized = todayStr.charAt(0).toUpperCase() + todayStr.slice(1);
+        weekDisplay.innerHTML = `Semana ${currentWeek} del ${currentYear} &nbsp;·&nbsp; <span class="today-label today-link">Hoy: ${todayCapitalized}</span>`;
+        const todayLink = weekDisplay.querySelector('.today-link');
+        if (todayLink) {
+            todayLink.addEventListener('click', async () => {
+                currentWeek = getISOWeek(new Date());
+                currentYear = new Date().getFullYear();
+                await renderCalendar(containerId, isAdmin);
+            });
+        }
+    }
 
     try {
         const data = await apiFetch(`/appointments?week=${currentWeek}&year=${currentYear}`);
@@ -69,35 +87,39 @@ async function renderCalendar(containerId, isAdmin) {
     for (let i = 0; i < 7; i++) {
         const day = new Date(startOfWeek);
         day.setDate(day.getDate() + i);
-        html += `<div class="grid-header">${weekDays[i]}<br><span class="date-number">${day.getDate()}</span></div>`;
+        const isToday = day.toDateString() === now.toDateString();
+        html += `<div class="grid-header${isToday ? ' today-col' : ''}">
+            ${weekDays[i]}<br>
+            <span class="date-number${isToday ? ' today-number' : ''}">${day.getDate()}</span>
+        </div>`;
     }
-
-    const now = new Date();
     hours.forEach(hour => {
         html += `<div class="time-label">${hour}</div>`;
         for (let dayIndex = 0; dayIndex < 7; dayIndex++) {
             const cellDate = new Date(startOfWeek);
             cellDate.setDate(startOfWeek.getDate() + dayIndex);
+            const isTodayCell = cellDate.toDateString() === now.toDateString();
             const [h] = hour.split(':');
             cellDate.setHours(parseInt(h), 0, 0, 0);
 
             const appointment = appointments.find(a => a.dateTime.getTime() === cellDate.getTime());
 
+            const todayCellClass = isTodayCell ? ' today-cell' : '';
             if (cellDate < now) {
                 if (appointment && appointment.state === 'reserved') {
                     const text = isAdmin ? `Reservada:<br>${appointment.client.name}` : 'RESERVADA';
-                    html += `<div class="time-slot reserved" data-id="${appointment.id}">${text}</div>`;
+                    html += `<div class="time-slot reserved${todayCellClass}" data-id="${appointment.id}">${text}</div>`;
                 } else {
-                    html += `<div class="time-slot reserved"></div>`;
+                    html += `<div class="time-slot reserved${todayCellClass}"></div>`;
                 }
             } else {
                 if (appointment) {
                     const text = appointment.state === 'available'
                         ? 'ABIERTO'
                         : (isAdmin ? `Reservada:<br>${appointment.client.name}` : 'RESERVADA');
-                    html += `<div class="time-slot ${appointment.state}" data-id="${appointment.id}">${text}</div>`;
+                    html += `<div class="time-slot ${appointment.state}${todayCellClass}" data-id="${appointment.id}">${text}</div>`;
                 } else {
-                    html += `<div class="time-slot available-empty" data-datetime="${cellDate.toISOString()}"></div>`;
+                    html += `<div class="time-slot available-empty${todayCellClass}" data-datetime="${cellDate.toISOString()}"></div>`;
                 }
             }
         }

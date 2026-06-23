@@ -14,7 +14,10 @@ const errorMiddleware = require('./middleware/error.middleware');
 
 const app = express();
 
-app.use(cors({ origin: env.frontendUrl }));
+app.use(cors({
+  origin: [env.frontendUrl, 'http://localhost:5500', 'http://localhost:3000', /\.netlify\.app$/, /\.trycloudflare\.com$/],
+  credentials: true
+}));
 app.use(express.json());
 
 // Documentación Swagger

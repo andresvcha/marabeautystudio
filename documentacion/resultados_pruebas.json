@@ -1,0 +1,199 @@
+{
+  "resultados": [
+    {
+      "prueba": "DNS Resolution",
+      "resultado": "CORRECTO",
+      "obs": "IPs: 98.84.224.111 18.208.88.157"
+    },
+    {
+      "prueba": "HTTP Status (con redirect)",
+      "resultado": "CORRECTO",
+      "obs": "Código final: 401"
+    },
+    {
+      "prueba": "HTTPS habilitado",
+      "resultado": "CORRECTO",
+      "obs": "Código HTTPS: 401 — Netlify incluye SSL automático"
+    },
+    {
+      "prueba": "Ping / Latencia",
+      "resultado": "INFORMATIVO",
+      "obs": "--- genuine-raindrop-4a79b7.netlify.app ping statistics --- 3 packets transmitte"
+    },
+    {
+      "prueba": "API GET /health — Health check",
+      "resultado": "CORRECTO",
+      "obs": "HTTP 200"
+    },
+    {
+      "prueba": "API GET /appointments — Listado de citas",
+      "resultado": "CORRECTO",
+      "obs": "HTTP 200"
+    },
+    {
+      "prueba": "API GET /clients — Listado de clientes",
+      "resultado": "CORRECTO",
+      "obs": "HTTP 401"
+    },
+    {
+      "prueba": "API GET /users — Usuarios (protegido)",
+      "resultado": "CORRECTO",
+      "obs": "HTTP 401"
+    },
+    {
+      "prueba": "API POST /auth/login",
+      "resultado": "CORRECTO",
+      "obs": "Token JWT generado correctamente"
+    },
+    {
+      "prueba": "Responsive — Desktop (1920×1080)",
+      "resultado": "CORRECTO",
+      "obs": "Título: \"Reservar Cita - Mara Beauty Studio\""
+    },
+    {
+      "prueba": "Responsive — Laptop (1366×768)",
+      "resultado": "CORRECTO",
+      "obs": "Título: \"Reservar Cita - Mara Beauty Studio\""
+    },
+    {
+      "prueba": "Responsive — Tablet iPad (768×1024)",
+      "resultado": "CORRECTO",
+      "obs": "Título: \"Reservar Cita - Mara Beauty Studio\""
+    },
+    {
+      "prueba": "Responsive — iPhone 14 (390×844)",
+      "resultado": "CORRECTO",
+      "obs": "Título: \"Reservar Cita - Mara Beauty Studio\""
+    },
+    {
+      "prueba": "Responsive — Samsung Galaxy (360×800)",
+      "resultado": "CORRECTO",
+      "obs": "Título: \"Reservar Cita - Mara Beauty Studio\""
+    },
+    {
+      "prueba": "Página principal carga",
+      "resultado": "CORRECTO",
+      "obs": "Título: \"Reservar Cita - Mara Beauty Studio\""
+    },
+    {
+      "prueba": "Calendario visible",
+      "resultado": "CORRECTO",
+      "obs": "Grid de citas renderizado"
+    },
+    {
+      "prueba": "Navegar semana siguiente",
+      "resultado": "CORRECTO",
+      "obs": "\"Semana 20 del 2026\" → \"Semana 21 del 2026\""
+    },
+    {
+      "prueba": "Navegar semana anterior",
+      "resultado": "CORRECTO",
+      "obs": "Regresa a la semana original"
+    },
+    {
+      "prueba": "Slots disponibles",
+      "resultado": "ADVERTENCIA",
+      "obs": "No hay citas disponibles en la semana actual — se necesita crear desde admin"
+    },
+    {
+      "prueba": "Página Admin Login carga",
+      "resultado": "CORRECTO",
+      "obs": "Formulario #login-form visible"
+    },
+    {
+      "prueba": "Login — validación campos vacíos",
+      "resultado": "CORRECTO",
+      "obs": "HTML5 required bloquea el envío"
+    },
+    {
+      "prueba": "Login — credenciales incorrectas",
+      "resultado": "CORRECTO",
+      "obs": "Mensaje de error mostrado: \"Usuario o contraseña incorrectos\""
+    },
+    {
+      "prueba": "Login Admin — credenciales válidas (admin/admin123)",
+      "resultado": "CORRECTO",
+      "obs": "Redirigido al dashboard: https://genuine-raindrop-4a79b7.netlify.app/dashboard.html"
+    },
+    {
+      "prueba": "Dashboard — tabla de citas",
+      "resultado": "ADVERTENCIA",
+      "obs": "Tabla no encontrada"
+    },
+    {
+      "prueba": "Crear cita — modal",
+      "resultado": "CORRECTO",
+      "obs": "Modal de creación abierto"
+    },
+    {
+      "prueba": "CRUD — filas de citas",
+      "resultado": "INFORMATIVO",
+      "obs": "Sin citas en BD para editar/eliminar"
+    },
+    {
+      "prueba": "Simulador de correo",
+      "resultado": "CORRECTO",
+      "obs": "Página cargada — título: \"Simulador de Correos - Mara Beauty Studio\""
+    },
+    {
+      "prueba": "Ruta inexistente (manejo 404)",
+      "resultado": "INFORMATIVO",
+      "obs": "URL resultante: https://genuine-raindrop-4a79b7.netlify.app/pagina-no-existe"
+    },
+    {
+      "prueba": "Rutas protegidas /api/admin — sin token",
+      "resultado": "CORRECTO",
+      "obs": "HTTP 401 — Acceso denegado correctamente"
+    },
+    {
+      "prueba": "Seguridad — XSS en login API",
+      "resultado": "CORRECTO",
+      "obs": "Input no se refleja en la respuesta"
+    },
+    {
+      "prueba": "Compatibilidad — Chrome 120",
+      "resultado": "CORRECTO",
+      "obs": "Título: \"Reservar Cita - Mara Beauty Studio\""
+    },
+    {
+      "prueba": "Compatibilidad — Firefox 121",
+      "resultado": "CORRECTO",
+      "obs": "Título: \"Reservar Cita - Mara Beauty Studio\""
+    },
+    {
+      "prueba": "Compatibilidad — Edge 120",
+      "resultado": "CORRECTO",
+      "obs": "Título: \"Reservar Cita - Mara Beauty Studio\""
+    },
+    {
+      "prueba": "Compatibilidad — Safari 17",
+      "resultado": "CORRECTO",
+      "obs": "Título: \"Reservar Cita - Mara Beauty Studio\""
+    }
+  ],
+  "shots": {
+    "404": "/Users/andres/Documents/Mara Beauty Studio/capturas/16_error_404.png",
+    "responsive_Desktop_1920": "/Users/andres/Documents/Mara Beauty Studio/capturas/01_responsive_Desktop_1920.png",
+    "responsive_Laptop_1366": "/Users/andres/Documents/Mara Beauty Studio/capturas/01_responsive_Laptop_1366.png",
+    "responsive_Tablet_iPad": "/Users/andres/Documents/Mara Beauty Studio/capturas/01_responsive_Tablet_iPad.png",
+    "responsive_Mobile_iPhone": "/Users/andres/Documents/Mara Beauty Studio/capturas/01_responsive_Mobile_iPhone.png",
+    "responsive_Mobile_Samsung": "/Users/andres/Documents/Mara Beauty Studio/capturas/01_responsive_Mobile_Samsung.png",
+    "inicio": "/Users/andres/Documents/Mara Beauty Studio/capturas/02_pagina_principal.png",
+    "nav_siguiente": "/Users/andres/Documents/Mara Beauty Studio/capturas/03_semana_siguiente.png",
+    "nav_anterior": "/Users/andres/Documents/Mara Beauty Studio/capturas/04_semana_anterior.png",
+    "sin_slots": "/Users/andres/Documents/Mara Beauty Studio/capturas/05_sin_slots_disponibles.png",
+    "admin_login": "/Users/andres/Documents/Mara Beauty Studio/capturas/07_admin_login.png",
+    "login_vacio": "/Users/andres/Documents/Mara Beauty Studio/capturas/08_login_campos_vacios.png",
+    "login_invalido": "/Users/andres/Documents/Mara Beauty Studio/capturas/09_login_credenciales_invalidas.png",
+    "login_exitoso": "/Users/andres/Documents/Mara Beauty Studio/capturas/10_login_exitoso.png",
+    "dashboard": "/Users/andres/Documents/Mara Beauty Studio/capturas/11_dashboard_admin.png",
+    "crear_cita": "/Users/andres/Documents/Mara Beauty Studio/capturas/12_crear_cita_modal.png",
+    "dashboard_final": "/Users/andres/Documents/Mara Beauty Studio/capturas/14_dashboard_completo.png",
+    "simulador": "/Users/andres/Documents/Mara Beauty Studio/capturas/15_simulador_correo.png",
+    "nav_Chrome 120": "/Users/andres/Documents/Mara Beauty Studio/capturas/17_navegador_Chrome_120.png",
+    "nav_Firefox 121": "/Users/andres/Documents/Mara Beauty Studio/capturas/17_navegador_Firefox_121.png",
+    "nav_Edge 120": "/Users/andres/Documents/Mara Beauty Studio/capturas/17_navegador_Edge_120.png",
+    "nav_Safari 17": "/Users/andres/Documents/Mara Beauty Studio/capturas/17_navegador_Safari_17.png"
+  },
+  "fecha": "2026-05-16T00:01:59.478Z"
+}
